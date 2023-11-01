@@ -1,7 +1,17 @@
 import openai
 import email_gpt as egpt
+import json
+
+
 # sua chave API
-openai.api_key ='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'
+# Abra o arquivo JSON
+with open('src.json', 'r') as file:
+    src = json.load(file)
+
+
+# key API
+API_KEY = src['key']
+openai.api_key = API_KEY
 
 def chat_with_gpt3():
     while True:

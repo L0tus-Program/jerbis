@@ -1,13 +1,22 @@
 import smtplib
 from email.mime.text import MIMEText 
+import json
 
 
 
-def enviar_email(ideia, destinatario): 
+def enviar_email(ideia, destinatario):
+    # sua chave API
+    # Abra o arquivo JSON
+    with open('src.json', 'r') as file:
+        src = json.load(file)
+
+    # key API
+    API_KEY = src['key']
+    openai.api_key = API_KEY 
     # Configurações do servidor de e-mail  
-    remetente = 'felipe@ladodefora.site' 
-    senha = 'Flg@1999'
-    servidor_smtp = 'email-ssl.com.br' 
+    remetente = str(src['email'])
+    senha = str(src['email'])
+    servidor_smtp = str(src['smtp']) 
     porta_smtp =  587 #465 #587  
     # Cria o objeto de mensagem MIMEText   
     msg = MIMEText(ideia)
