@@ -5,37 +5,38 @@ import json
 
 
 def enviar_email(ideia, destinatario):
-    # sua chave API
-    # Abra o arquivo JSON
-    with open('src.json', 'r') as file:
-        src = json.load(file)
+    try:
+        print("Entrando na função mail")
+            # Dados de autenticação
+        username = "felipe@ladodefora.site"
+        password = "Flg@1999"
+        emailDestino = destinatario
+        conteudo = ideia
+        # Criação do objeto MIMEText
+        msg = MIMEText(conteudo, 'plain', 'utf-8') # é necessário codificar o objeto para utf-8 para poder enviar acentos
+        msg['To'] = emailDestino
+        msg['From'] = username
+        msg['Subject'] = "Erro com a API"
 
-    # key API
-    API_KEY = src['key']
-    openai.api_key = API_KEY 
-    # Configurações do servidor de e-mail  
-    remetente = str(src['email'])
-    senha = str(src['email'])
-    servidor_smtp = str(src['smtp']) 
-    porta_smtp =  587 #465 #587  
-    # Cria o objeto de mensagem MIMEText   
-    msg = MIMEText(ideia)
-    msg['Subject'] = 'Ideia'
-    msg['From'] = remetente
-    msg['To'] = destinatario
-    try:         
-        # Inicia a conexão com o servidor SMTP 
-        server = smtplib.SMTP(servidor_smtp, porta_smtp)
-        server.starttls()
-        server.login(remetente, senha)
-        # Envia o e-mail
-        server.sendmail(remetente, destinatario, msg.as_string()) 
-        print('E-mail enviado com sucesso!')  
+        # Adicionando cabeçalhos de conteúdo
+        msg.add_header('Content-Type', 'text/plain; charset=UTF-8')
+
+        """# Enviando o e-mail
+        with smtplib.SMTP("email-ssl.com.br", 587) as server: #587 465
+            print("Entrou no servidor")
+            server.starttls()
+            server.login(username, password)
+            server.sendmail(username, emailDestino, msg.as_string())"""
+        
+        # Enviando o e-mail usando SMTP_SSL
+        with smtplib.SMTP_SSL("email-ssl.com.br", 465) as server:
+            server.login(username, password)
+            server.sendmail(username, emailDestino, msg.as_string())
+
+        print("E-mail enviado com sucesso!")
     except Exception as e:
-        print('Erro ao enviar o e-mail:', str(e))  
-    finally:
-     # Encerra a conexão com o servidor SMTP
-     server.quit() 
+        print(f"Ocorreu um erro: {e}")
+
 
 
 

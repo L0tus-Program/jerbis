@@ -48,6 +48,7 @@ def chat_with_gpt3():
                     
                 ]
             )
+            
 
             print("ChatGPT:", response.choices[0].message['content'].strip()) 
 

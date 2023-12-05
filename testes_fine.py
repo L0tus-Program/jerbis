@@ -18,7 +18,7 @@ op = openai.File.create(
 )   """
 
 op = openai.File.create(
-  file=open("dados.json", "r"),
+  file=open("dados.jsonl", "r"),
   purpose='fine-tune'
 )
 
