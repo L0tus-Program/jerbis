@@ -18,27 +18,28 @@ openai.api_key = API_KEY
 modelo = "gpt-3.5-turbo-0613"
 
 historico = []  # Lista para armazenar o histórico de mensagens
-def lembretes(time,lembrete):
+
+
+def lembretes(time, lembrete):
     print("Entrou lembrete")
     print(time)
     print(lembrete)
 
 
-
 def enviar_email_gpt(ideia, destinatario):
     try:
         print("Entrou email")
-        egpt.enviar_email(ideia,destinatario)
+        egpt.enviar_email(ideia, destinatario)
     except:
         pass
-# Passo 1, manda o texto pro modelo e prepara a funcao caso ela seja chamada
+
 
 def webscrap(url):
-    #print("Webscrap")
+    # print("Webscrap")
     global historico
     req = scraping(url)
-    #print(type(req))
-    #print(type(historico))
+    # print(type(req))
+    # print(type(historico))
     historico.append(str(req))  # Adiciona a mensagem ao histórico
 
 
@@ -49,18 +50,16 @@ def run_conversation():
     cursor.execute("SELECT * from Mensagens")
     dados = cursor.fetchall()
 
-
     for row in dados:
-        print(row)
-        historico.append(row[1])  # Adiciona o segundo elemento de cada linha à lista
+        # print(row)
+        # Adiciona o segundo elemento de cada linha à lista
+        historico.append(row[1])
 
-    
     while True:
 
-        
         mensagem = input("User : ")
-        
-       # print(historico)
+
+        # print(historico)
         concat = "User : " + mensagem
         historico.append(concat)  # Adiciona a mensagem ao histórico
         if mensagem.lower() in ['sair', 'exit']:
@@ -71,25 +70,27 @@ def run_conversation():
             # Excluir todos os dados existentes na tabela
             cursor.execute("DELETE FROM Mensagens")
             conn.commit()
-            #print(historico)
+            # print(historico)
             # Inserir os novos dados da lista na tabela
             for mensagem in historico:
-                #print("Inserindo no BD: ",mensagem)
+                # print("Inserindo no BD: ",mensagem)
                 query = f"INSERT INTO Mensagens (mensagem) VALUES('{mensagem}')"
 
-                cursor.execute(query)  # Substitua 'nome_da_coluna' pelo nome real da coluna
+                # Substitua 'nome_da_coluna' pelo nome real da coluna
+                cursor.execute(query)
                 conn.commit()
             conn.close()
 
             print("Encerrando chat...")
             break
         # print("Recebido:", mensagem)
-        #response = openai.ChatCompletion.create( # api antiga
+        # response = openai.ChatCompletion.create( # api antiga
          # Filtra os valores None do histórico
         historico_filtrado = [msg for msg in historico if msg is not None]
-        response = openai.ChatCompletion.create( 
+        response = openai.ChatCompletion.create(
             model=modelo,
-            messages=[{"role": "user",  "content": '\n'.join(historico_filtrado)}],
+            messages=[
+                {"role": "user",  "content": '\n'.join(historico_filtrado)}],
             functions=[
                 {
                     "name": "enviar_email_gpt",
@@ -108,36 +109,36 @@ def run_conversation():
                 },
                 {
                     "name": "webscrap",
-                    "description" : "Acessar um site e ver seu conteúdo",
+                    "description": "Acessar um site e ver seu conteúdo",
                     "parameters": {
                         "type": "object",
-                        "properties":{
-                            "url":{
-                                "type":"string",
+                        "properties": {
+                            "url": {
+                                "type": "string",
                                 "description": "URL completa para enviar para a função de webscrapping"
                             },
                         },
-                        "required":["url"],
+                        "required": ["url"],
                     },
 
 
                 },
                 {
                     "name": "lembretes",
-                    "description" : "Adicionar um lembrete na minha agenda",
+                    "description": "Adicionar um lembrete na minha agenda",
                     "parameters": {
                         "type": "object",
-                        "properties":{
-                            "time":{
-                                "type":"integer",
+                        "properties": {
+                            "time": {
+                                "type": "integer",
                                 "description": "Timer em segundos até o momento que devo ser lembrado de algo"
                             },
-                            "lembrete":{
-                                "type":"string",
-                                "description":"Base do que eu preciso ser lembrado"
+                            "lembrete": {
+                                "type": "string",
+                                "description": "Base do que eu preciso ser lembrado"
                             }
                         },
-                        "required":["time","lembrete"],
+                        "required": ["time", "lembrete"],
                     },
                 }
 
@@ -145,25 +146,24 @@ def run_conversation():
             function_call="auto",
         )
 
-        first_response = response["choices"][0]["message"] 
+        first_response = response["choices"][0]["message"]
 
         if first_response['content'] == "None":
             pass
         else:
-            print("\nJerbis: ", first_response['content'],"\n")
-            concat = "Jerbis : " + first_response['content']
+            print("\nJerbis: ", first_response['content'], "\n")
+            concat = "Jerbis : " + str(first_response['content'])
             historico.append(concat)
 
-        # Passo 2, verifica se o modelo quer chamar uma funcao
+        # verifica se o modelo quer chamar uma funcao
         if first_response.get("function_call"):
             function_name = first_response["function_call"]["name"]
-            function_args = json.loads(first_response["function_call"]["arguments"])
+            function_args = json.loads(
+                first_response["function_call"]["arguments"])
 
-            """print("")
             print("Detectou uma função", function_name, function_args)
-            print("")"""
 
-            # Passo 3, chama a funcao
+            # chama a funcao
             # Detalhe: a resposta em JSON do modelo pode não ser um JSON valido
             if function_name == "enviar_email_gpt":
                 function_response = enviar_email_gpt(
@@ -173,7 +173,7 @@ def run_conversation():
             elif function_name == "webscrap":
                 function_response = webscrap(
                     url=function_args.get("url")
-                    
+
                 )
 
             elif function_name == "lembretes":
@@ -185,8 +185,6 @@ def run_conversation():
                 print("Nao achei a funcao pedida")
 
 
-
-
 if __name__ == '__main__':
     conn = sqlite3.connect('jerbis.db')
     cursor = conn.cursor()
@@ -195,8 +193,6 @@ if __name__ == '__main__':
                  mensagem TEXT )''')
     conn.commit()
     conn.close()
-    
-
 
     print("Iniciando Jerbis. Digite 'sair' ou 'exit' para encerrar.")
 

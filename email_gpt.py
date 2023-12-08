@@ -1,19 +1,19 @@
 import smtplib
-from email.mime.text import MIMEText 
+from email.mime.text import MIMEText
 import json
-
 
 
 def enviar_email(ideia, destinatario):
     try:
         print("Entrando na função mail")
-            # Dados de autenticação
+        # Dados de autenticação
         username = "felipe@ladodefora.site"
         password = "Flg@1999"
         emailDestino = destinatario
         conteudo = ideia
         # Criação do objeto MIMEText
-        msg = MIMEText(conteudo, 'plain', 'utf-8') # é necessário codificar o objeto para utf-8 para poder enviar acentos
+        # é necessário codificar o objeto para utf-8 para poder enviar acentos
+        msg = MIMEText(conteudo, 'plain', 'utf-8')
         msg['To'] = emailDestino
         msg['From'] = username
         msg['Subject'] = "Erro com a API"
@@ -27,7 +27,7 @@ def enviar_email(ideia, destinatario):
             server.starttls()
             server.login(username, password)
             server.sendmail(username, emailDestino, msg.as_string())"""
-        
+
         # Enviando o e-mail usando SMTP_SSL
         with smtplib.SMTP_SSL("email-ssl.com.br", 465) as server:
             server.login(username, password)
@@ -38,8 +38,4 @@ def enviar_email(ideia, destinatario):
         print(f"Ocorreu um erro: {e}")
 
 
-
-
-
-
-#enviar_email("testand direto", "felipe.gomes@messeminvestimentos.com.br")
+# enviar_email("testand direto", "felipe.gomes@messeminvestimentos.com.br")
