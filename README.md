@@ -1,6 +1,12 @@
 # jerbis
  O assistente virtual Jerbis está pronto para lhe ajudar.
 
+# Lista de sites por ramo 
+- Financeiro
+  - infomoney
+
+
+- Tecnologia
 
 # Pendencias
 

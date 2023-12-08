@@ -87,10 +87,14 @@ def run_conversation():
         # response = openai.ChatCompletion.create( # api antiga
          # Filtra os valores None do histórico
         historico_filtrado = [msg for msg in historico if msg is not None]
+        persona = "Seu nome é Jerbis,você é um assistente virtual criado por mim e que ainda está em desenvolvimento, estamos testando novas funcionalidades. Você deve ser um especialista em qualquer assunto que conversarmos, principalmente no ramo de tecnologia. Lembre-se de que junto da ultima mensagem você sempre receberá o histórico inteiro das mensagens, então quando eu questioinar algo de mensagens anteriores você pode consultar a mesma mensagem."
+            
         response = openai.ChatCompletion.create(
             model=modelo,
             messages=[
+                {"role": "system", "content": persona},
                 {"role": "user",  "content": '\n'.join(historico_filtrado)}],
+            temperature = 0.8,
             functions=[
                 {
                     "name": "enviar_email_gpt",
