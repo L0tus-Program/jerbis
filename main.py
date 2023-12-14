@@ -21,6 +21,8 @@ openai.api_key = API_KEY
 
 modelo = "gpt-3.5-turbo-0613"
 
+data_hora_atual = datetime.now()
+
 historico = []  # Lista para armazenar o histórico de mensagens
 
 
@@ -211,6 +213,7 @@ def run_conversation(comando_de_voz):
                 )
 
             elif function_name == "lembretes":
+            
                 function_response = lembretes(
                     time=function_args.get("time"),
                     lembrete=function_args.get("lembrete"),
@@ -230,5 +233,5 @@ if __name__ == '__main__':
 
     print("Iniciando Jerbis. Digite 'sair' ou 'exit' para encerrar.")
     #Configurações
-    comando_de_voz = True
+    comando_de_voz = False
     run_conversation(comando_de_voz)
