@@ -34,10 +34,10 @@ def enviar_email_gpt(ideia, destinatario):
         pass
 
 
-def webscrap(url):
+def webscrap(url, contexto):
     # print("Webscrap")
     global historico
-    req = scraping(url)
+    req = scraping(url, contexto)
     # print(type(req))
     # print(type(historico))
     historico.append(str(req))  # Adiciona a mensagem ao histórico
@@ -110,7 +110,7 @@ def run_conversation(comando_de_voz):
             break
         # print("Recebido:", mensagem)
         # response = openai.ChatCompletion.create( # api antiga
-         # Filtra os valores None do histórico
+        # Filtra os valores None do histórico
         historico_filtrado = [msg for msg in historico if msg is not None]
         persona = "Seu nome é Jerbis,você é um assistente virtual criado por mim e que ainda está em desenvolvimento, estamos testando novas funcionalidades. Você deve ser um especialista em qualquer assunto que conversarmos, principalmente no ramo de tecnologia. Lembre-se de que junto da ultima mensagem você sempre receberá o histórico inteiro das mensagens, então quando eu questioinar algo de mensagens anteriores você pode consultar a mesma mensagem."
 
@@ -146,8 +146,12 @@ def run_conversation(comando_de_voz):
                                 "type": "string",
                                 "description": "URL completa para enviar para a função de webscrapping, caso a pergunta seja a respeito de economia ou mercado financeiro tente acessar a infomoney"
                             },
+                            "contexto": {
+                                "type": "string",
+                                "description": "Minha dúvida, curiosidade ou coisa que eu quero saber."
+                            },
                         },
-                        "required": ["url"],
+                        "required": ["url", "contexto"],
                     },
 
 
@@ -177,7 +181,7 @@ def run_conversation(comando_de_voz):
 
         first_response = response["choices"][0]["message"]
 
-        if first_response['content'] == "None":
+        if first_response['content'] == None:
             pass
         else:
             print("\nJerbis: ", first_response['content'], "\n")
@@ -205,7 +209,8 @@ def run_conversation(comando_de_voz):
                 )
             elif function_name == "webscrap":
                 function_response = webscrap(
-                    url=function_args.get("url")
+                    url=function_args.get("url"),
+                    contexto=function_args.get("contexto")
 
                 )
 
@@ -230,5 +235,5 @@ if __name__ == '__main__':
 
     print("Iniciando Jerbis. Digite 'sair' ou 'exit' para encerrar.")
     # Configurações
-    comando_de_voz = False
+    comando_de_voz = True
     run_conversation(comando_de_voz)

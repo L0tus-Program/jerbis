@@ -15,7 +15,7 @@
   - Adicionar notificação na desktop
 - Adicionar minha localização as chamadas do GPT, pra caso eu use uma API de previsão do tempo ou noticias locais
   - Adicionar função diferente pra previsão do tempo ao inves do webscrapping, conectando a alguma API.
-  
+- Utilizar api News API do google pra acessar noticias gerais
 
 # O próprio Jerbis pediu por mais habilidades
 
