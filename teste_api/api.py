@@ -1,16 +1,20 @@
 from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
-
+import jerbis
 
 app = Flask(__name__)
 CORS(app)  # Quando subir pra VPS, configurar domínios que podem acessar
 
 
-@app.route("/", methods=["POST"])
+@app.route("/message_typebot", methods=["POST"])
 def default():
-    data = request.get_data(as_text= True)
+    data = request.get_json()
+    message = data['message']
+    history = data['history']
+    response = jerbis.chat_api_typebot(message,history)
+
     
-    return "bombou"
+    return jsonify({"response": response}),200
 
 
 if __name__ == '__main__':

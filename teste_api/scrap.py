@@ -23,7 +23,7 @@ def scraping(url, contexto):
             conteudo = '\n'.join(tag.get_text(strip=True)
                                  for tag in tags_texto)
             
-            print(conteudo)
+            #print(conteudo)
 
             if conteudo:
                 # print(conteudo)
@@ -54,7 +54,7 @@ def scraping(url, contexto):
 
                 # Exibe o resumo gerado pelo ChatGPT
                 response = response_gpt.choices[0].message['content'].strip()
-                print("Jerbis :\n", response)
+                print(response)
                 return response
 
             else:
@@ -64,4 +64,4 @@ def scraping(url, contexto):
                 f"Erro ao fazer a requisição. Status code: {response.status_code}")
 
     except:
-        print("Não foi possível fazer a requisição")
+        return("Não foi possível fazer a requisição")
